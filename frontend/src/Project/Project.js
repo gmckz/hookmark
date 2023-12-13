@@ -18,19 +18,29 @@ function Project() {
 	const [trigger, setTrigger] = useState(false);
 
 	useEffect(() => {
-		fetch(URL, {
-			mode: "cors",
-		})
-			.then((res) => res.json())
-			.then((data) =>
-				setProject({
-					created_at: data.created_at,
-					id: data.id,
-					link: data.link,
-					name: data.name,
-					notes: data.notes,
+		try {
+			fetch(URL, {
+				mode: "cors",
+			})
+				.then((res) => {
+					if (!res.ok) {
+						throw new Error("HTTP error: ", res.status);
+					}
+					return res.json();
 				})
-			);
+				.then((data) =>
+					setProject({
+						created_at: data.created_at,
+						id: data.id,
+						link: data.link,
+						name: data.name,
+						notes: data.notes,
+					})
+				)
+				.catch((error) => console.error("Fetch error:", error));
+		} catch (error) {
+			console.log(error);
+		}
 	}, [trigger]);
 
 	const onProjectUpdate = () => {
